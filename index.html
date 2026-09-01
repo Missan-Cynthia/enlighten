@@ -83,6 +83,13 @@ body{touch-action:manipulation;user-select:none}
 
 <script src="pokemon-zhuyin.js"></script>
 <script>
+// 教育部《國語注音符號手冊》音檔編號。
+// 本站卡片將 ㄧ、ㄨ、ㄩ 排在韻符之前，因此需使用明確映射，不能直接套用卡片序號。
+const MOE_ZHUYIN_AUDIO = [
+  1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,
+  35,36,37,22,23,24,25,26,27,28,29,30,31,32,33,34
+];
+
 const DATA = {
   bopomofo: [
     ["ㄅ","bo"],["ㄆ","po"],["ㄇ","mo"],["ㄈ","fo"],["ㄉ","de"],["ㄊ","te"],["ㄋ","ne"],["ㄌ","le"],
@@ -90,7 +97,14 @@ const DATA = {
     ["ㄕ","shi"],["ㄖ","ri"],["ㄗ","zi"],["ㄘ","ci"],["ㄙ","si"],["ㄧ","i"],["ㄨ","u"],["ㄩ","yu"],
     ["ㄚ","a"],["ㄛ","o"],["ㄜ","e"],["ㄝ","eh"],["ㄞ","ai"],["ㄟ","ei"],["ㄠ","ao"],["ㄡ","ou"],
     ["ㄢ","an"],["ㄣ","en"],["ㄤ","ang"],["ㄥ","eng"],["ㄦ","er"]
-  ].map(([display,file],i)=>({display,label:display,speak:display,img:`output/zhuyin/${String(i+1).padStart(2,"0")}_${file}.webp`,lang:"zh-TW",kind:"bopomofo"})),
+  ].map(([display,file],i)=>({
+    display,
+    label:display,
+    img:`output/zhuyin/${String(i+1).padStart(2,"0")}_${file}.webp`,
+    audio:`audio/zhuyin/F${MOE_ZHUYIN_AUDIO[i]}.WAV`,
+    lang:"zh-TW",
+    kind:"bopomofo"
+  })),
 
   letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((x,i)=>{
     const display = x + x.toLowerCase();
@@ -123,6 +137,13 @@ const counter = document.getElementById("counter");
 const pop = document.getElementById("pop");
 let category = null;
 let index = 0;
+const officialAudio = new Audio();
+officialAudio.preload = "auto";
+
+function stopAudio(){
+  officialAudio.pause();
+  officialAudio.currentTime = 0;
+}
 
 function openCategory(cat){
   category = cat;
@@ -133,6 +154,7 @@ function openCategory(cat){
 }
 
 function goHome(){
+  stopAudio();
   speechSynthesis.cancel();
   learn.classList.remove("active");
   home.classList.add("active");
@@ -170,12 +192,21 @@ function renderCard(){
 function speakCurrent(){
   if(!category) return;
   const item = DATA[category][index];
+  stopAudio();
   speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(item.speak);
-  u.lang = item.lang;
-  u.rate = category === "letters" ? 0.72 : 0.78;
-  u.pitch = 1.05;
-  speechSynthesis.speak(u);
+  if(item.audio){
+    officialAudio.src = item.audio;
+    officialAudio.play().catch(error=>{
+      // 快速換卡會正常中止上一段播放，不視為載入錯誤。
+      if(error.name !== "AbortError") console.warn("官方注音音檔播放失敗",error);
+    });
+  } else {
+    const u = new SpeechSynthesisUtterance(item.speak);
+    u.lang = item.lang;
+    u.rate = category === "letters" ? 0.72 : 0.78;
+    u.pitch = 1.05;
+    speechSynthesis.speak(u);
+  }
   pop.classList.remove("go");
   void pop.offsetWidth;
   pop.classList.add("go");
@@ -183,6 +214,7 @@ function speakCurrent(){
 
 function move(dir){
   if(!category) return;
+  stopAudio();
   const list = DATA[category];
   index = (index + dir + list.length) % list.length;
   renderCard();
