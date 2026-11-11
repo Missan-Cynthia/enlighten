@@ -17,22 +17,24 @@ body{touch-action:manipulation;user-select:none}
 .screen{position:fixed;inset:0;width:100%;height:100vh;height:100dvh;display:none;padding:max(18px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(18px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));overflow:hidden}
 .screen.active{display:flex}
 
-/* 首頁四宮格 */
+/* 首頁分類 */
 #home{align-items:center;justify-content:center;background:linear-gradient(180deg,#fffaf2 0%,#fff4dc 100%)}
-.grid{width:min(92vw,82vh,760px);width:min(92vw,82dvh,760px);aspect-ratio:1;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(10px,2.2vmin,18px)}
-.cat{border:0;border-radius:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px;cursor:pointer;box-shadow:0 14px 32px rgba(80,55,30,.12);transition:transform .12s ease,box-shadow .12s ease}
+.grid{width:min(92vw,120vh,760px);width:min(92vw,120dvh,760px);aspect-ratio:3/2;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:clamp(8px,2vmin,16px)}
+.cat{border:0;border-radius:clamp(16px,4vmin,34px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(4px,1.4vmin,12px);padding:clamp(4px,1.5vmin,12px);cursor:pointer;box-shadow:0 14px 32px rgba(80,55,30,.12);transition:transform .12s ease,box-shadow .12s ease}
+.empty-slot{border-radius:clamp(16px,4vmin,34px);background:rgba(80,55,30,.04)}
 .cat:active{transform:scale(.965);box-shadow:0 8px 18px rgba(80,55,30,.10)}
-.cat-icon{font-size:clamp(72px,17vw,138px);font-weight:900;line-height:1}
-.cat-name{font-size:clamp(24px,5.8vw,40px);font-weight:900;white-space:nowrap;letter-spacing:.03em}
+.cat-icon{font-size:clamp(26px,10vmin,88px);font-weight:900;line-height:1}
+.cat-name{font-size:clamp(13px,4vmin,28px);font-weight:900;white-space:nowrap;letter-spacing:.03em}
 .cat.bopomofo{background:#ffe9c8}
 .cat.letters{background:#dff1ff}
 .cat.numbers{background:#e7f4dc}
 .cat.pokemon{background:#f5e4ff}
+.cat.food{background:#ffe5dc}
 .cat.bopomofo .cat-icon{color:#b76d00}
 .cat.letters .cat-icon{color:#2c6fa3}
 .cat.numbers .cat-icon{color:#4f7a32}
 .cat.pokemon .cat-icon{filter:drop-shadow(0 5px 5px rgba(0,0,0,.08))}
-.cat-icon-img{width:clamp(82px,18vw,144px);height:clamp(82px,18vw,144px);object-fit:contain;display:block}
+.cat-icon-img{width:clamp(30px,11vmin,94px);height:clamp(30px,11vmin,94px);object-fit:contain;display:block}
 
 /* 學習卡 */
 #learn{align-items:center;justify-content:center}
@@ -55,8 +57,8 @@ body{touch-action:manipulation;user-select:none}
 .pop.go{animation:pop .42s ease}
 @keyframes pop{0%{opacity:0;transform:scale(.75)}35%{opacity:.8;transform:scale(1.05)}100%{opacity:0;transform:scale(1.25)}}
 
-@media(max-width:520px){.cat{border-radius:clamp(20px,6vw,26px);padding:clamp(8px,2.5vw,12px);gap:clamp(7px,2vw,12px)}.cat-icon{font-size:clamp(52px,17vw,82px)}.cat-icon-img{width:clamp(58px,18vw,88px);height:clamp(58px,18vw,88px)}.cat-name{font-size:clamp(20px,5.8vw,28px)}.card{border-radius:28px}.label{padding:12px 12px 22px}}
-@media(max-height:520px) and (orientation:landscape){.grid{width:min(78vw,78dvh,620px)}.cat{border-radius:20px;padding:8px;gap:5px}.cat-icon{font-size:clamp(40px,13vh,66px)}.cat-icon-img{width:clamp(44px,14vh,70px);height:clamp(44px,14vh,70px)}.cat-name{font-size:clamp(17px,4.5vh,24px)}.hint{display:none}}
+@media(max-width:520px){.card{border-radius:28px}.label{padding:12px 12px 22px}}
+@media(max-height:520px) and (orientation:landscape){.hint{display:none}}
 </style>
 </head>
 <body>
@@ -66,7 +68,9 @@ body{touch-action:manipulation;user-select:none}
     <button class="cat bopomofo" data-cat="bopomofo"><div class="cat-icon">ㄅ</div><div class="cat-name">注音符號</div></button>
     <button class="cat letters" data-cat="letters"><div class="cat-icon" style="font-family:Arial,sans-serif">ABC</div><div class="cat-name">英文字母</div></button>
     <button class="cat numbers" data-cat="numbers"><div class="cat-icon" style="font-family:Arial,sans-serif">123</div><div class="cat-name">數字</div></button>
+    <button class="cat food" data-cat="food"><img class="cat-icon-img" src="output/food/26-漢堡.png" alt=""><div class="cat-name">食物</div></button>
     <button class="cat pokemon" data-cat="pokemon"><div class="cat-icon"><img class="cat-icon-img" src="精靈球.png" alt="精靈球"></div><div class="cat-name">寶可夢</div></button>
+    <div class="empty-slot" aria-hidden="true"></div>
   </div>
 </section>
 
@@ -78,7 +82,7 @@ body{touch-action:manipulation;user-select:none}
     <div class="label" id="label"></div>
   </div>
   <div class="pop" id="pop">🔊</div>
-  <div class="hint">點畫面發音・左右滑動換下一張</div>
+  <div class="hint" id="hint">點畫面發音・左右滑動換下一張</div>
 </section>
 
 <script src="pokemon-zhuyin.js"></script>
@@ -114,6 +118,50 @@ const DATA = {
   numbers: ["零","一","二","三","四","五","六","七","八","九","十"]
     .map((speak,i)=>({display:String(i),label:String(i),speak,img:`output/numbers/${String(i+1).padStart(2,"0")}_${i}.webp`,lang:"zh-TW",kind:"number"})),
 
+  food: [
+    ["白飯","ㄅㄞˊ ㄈㄢˋ"],
+    ["麵條","ㄇㄧㄢˋ ㄊㄧㄠˊ"],
+    ["番茄","ㄈㄢ ㄑㄧㄝˊ"],
+    ["南瓜","ㄋㄢˊ ㄍㄨㄚ"],
+    ["青江菜","ㄑㄧㄥ ㄐㄧㄤ ㄘㄞˋ"],
+    ["蘋果","ㄆㄧㄥˊ ㄍㄨㄛˇ"],
+    ["櫻桃","ㄧㄥ ㄊㄠˊ"],
+    ["香蕉","ㄒㄧㄤ ㄐㄧㄠ"],
+    ["芭樂","ㄅㄚ ㄌㄜˋ"],
+    ["藍莓","ㄌㄢˊ ㄇㄟˊ"],
+    ["葡萄","ㄆㄨˊ ㄊㄠˊ"],
+    ["雞蛋","ㄐㄧ ㄉㄢˋ"],
+    ["豆腐","ㄉㄡˋ ㄈㄨˇ"],
+    ["鮭魚","ㄍㄨㄟ ㄩˊ"],
+    ["炸雞腿","ㄓㄚˊ ㄐㄧ ㄊㄨㄟˇ"],
+    ["鹹豬肉","ㄒㄧㄢˊ ㄓㄨ ㄖㄡˋ"],
+    ["牛排","ㄋㄧㄡˊ ㄆㄞˊ"],
+    ["牛奶","ㄋㄧㄡˊ ㄋㄞˇ"],
+    ["花生","ㄏㄨㄚ ㄕㄥ"],
+    ["核桃","ㄏㄜˊ ㄊㄠˊ"],
+    ["可樂","ㄎㄜˇ ㄌㄜˋ"],
+    ["紅茶","ㄏㄨㄥˊ ㄔㄚˊ"],
+    ["珍珠","ㄓㄣ ㄓㄨ"],
+    ["雞排","ㄐㄧ ㄆㄞˊ"],
+    ["甜不辣","ㄊㄧㄢˊ ㄅㄨˋ ㄌㄚˋ"],
+    ["漢堡","ㄏㄢˋ ㄅㄠˇ"],
+    ["千層蛋糕","ㄑㄧㄢ ㄘㄥˊ ㄉㄢˋ ㄍㄠ"],
+    ["布丁","ㄅㄨˋ ㄉㄧㄥ"],
+    ["冰淇淋","ㄅㄧㄥ ㄑㄧˊ ㄌㄧㄣˊ"],
+    ["馬卡龍","ㄇㄚˇ ㄎㄚˇ ㄌㄨㄥˊ"],
+    ["甜甜圈","ㄊㄧㄢˊ ㄊㄧㄢˊ ㄑㄩㄢ"],
+    ["蛋塔","ㄉㄢˋ ㄊㄚˇ"],
+    ["慕斯蛋糕","ㄇㄨˋ ㄙ ㄉㄢˋ ㄍㄠ"],
+    ["鬆餅","ㄙㄨㄥ ㄅㄧㄥˇ"]
+  ].map(([label,zhuyin],i)=>({
+    label,
+    zhuyin,
+    speak:label,
+    img:`output/food/${String(i+1).padStart(2,"0")}-${label}.png`,
+    lang:"zh-TW",
+    kind:"food"
+  })),
+
   pokemon: (window.POKEMON_ZHUYIN || [])
     .slice()
     .sort((a,b)=>a.id-b.id)
@@ -135,6 +183,7 @@ const label = document.getElementById("label");
 const card = document.getElementById("card");
 const counter = document.getElementById("counter");
 const pop = document.getElementById("pop");
+const hint = document.getElementById("hint");
 let category = null;
 let index = 0;
 const officialAudio = new Audio();
@@ -150,7 +199,11 @@ function openCategory(cat){
   index = 0;
   home.classList.remove("active");
   learn.classList.add("active");
+  hint.textContent = cat === "food"
+    ? "點畫面重聽・右滑下一張・左滑上一張"
+    : "點畫面發音・左右滑動換下一張";
   renderCard();
+  if(cat === "food") speakCurrent();
 }
 
 function goHome(){
@@ -165,7 +218,7 @@ function renderCard(){
   const list = DATA[category];
   const item = list[index];
   counter.textContent = `${index+1} / ${list.length}`;
-  label.classList.toggle("pokemon-label", item.kind === "pokemon");
+  label.classList.toggle("pokemon-label", Boolean(item.zhuyin));
 
   visual.replaceChildren();
   const img = document.createElement("img");
@@ -175,7 +228,7 @@ function renderCard(){
   img.draggable = false;
   visual.appendChild(img);
 
-  if(item.kind === "pokemon"){
+  if(item.zhuyin){
     label.replaceChildren();
     const name = document.createElement("div");
     name.className = "pokemon-name";
@@ -232,7 +285,10 @@ let sx=0,sy=0;
 card.addEventListener("touchstart",e=>{const t=e.changedTouches[0];sx=t.clientX;sy=t.clientY},{passive:true});
 card.addEventListener("touchend",e=>{
   const t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;
-  if(Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)) move(dx<0?1:-1);
+  if(Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)){
+    const direction = dx > 0 ? 1 : -1;
+    move(category === "food" ? direction : -direction);
+  }
 },{passive:true});
 
 window.addEventListener("keydown",e=>{
