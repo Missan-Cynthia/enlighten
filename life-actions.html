@@ -26,8 +26,8 @@ main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 2
 .frame { position: relative; display: block; width: 102px; height: 135px; border: 7px solid #74492f; border-radius: 7px 7px 0 0; background: linear-gradient(#9cdbf2 56%, #8fbc73 57%, #759f5e 72%, #d4bd92 73%); }
 .frame::after { content: ""; position: absolute; inset: 0; background: #bd7f51; box-shadow: inset 0 0 0 5px #a46643; transform-origin: left; }
 .frame::before { content: ""; position: absolute; z-index: 1; width: 10px; height: 10px; border-radius: 50%; background: #ffe09a; top: 53%; right: 8px; }
-.open .frame::after { transform: perspective(95px) rotateY(-59deg); }
-.open .frame::before { right: 45px; }
+.open .frame:not(.window)::after { right: 56%; clip-path: polygon(0 0, 100% 15%, 100% 85%, 0 100%); background: linear-gradient(90deg, #a46643 0 12%, #bd7f51 12% 90%, #925738 90%); box-shadow: none; }
+.open .frame:not(.window)::before { left: 29%; right: auto; width: 7px; height: 8px; }
 .window { width: 134px; height: 101px; border: 7px solid #596e74; border-radius: 8px; box-shadow: 0 5px #91a3a3; }
 .window::after { background: linear-gradient(90deg, #a5ceda 47%, #596e74 48% 53%, #a5ceda 54%); box-shadow: inset 0 0 0 3px #728e97; }
 .window::before { display: none; }
@@ -112,5 +112,3 @@ dialog select { width: 100%; margin: 6px 0 12px; padding: 8px; }
 <script src="life-actions.js"></script>
 </body>
 </html>
-
-
