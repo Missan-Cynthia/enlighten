@@ -1,3 +1,4 @@
+(() => {
 "use strict";
 
 const cards = [
@@ -12,14 +13,17 @@ const cards = [
   { name: "珍珠", food: "pearls", image: "23-珍珠.png", alt: "一堆珍珠", phrases: ["吃珍珠"] },
 ];
 
-const main = document.querySelector("main");
-const dialog = document.querySelector("dialog");
-const phrase = document.querySelector("#phrase");
-const record = document.querySelector("#record");
-const preview = document.querySelector("#preview");
-const save = document.querySelector("#save");
-const reset = document.querySelector("#reset");
-const status = document.querySelector("#status");
+const screen = document.querySelector("#life-actions");
+const home = document.querySelector("#home");
+const entry = document.querySelector("#actions-entry");
+const main = screen.querySelector("main");
+const dialog = screen.querySelector("dialog");
+const phrase = screen.querySelector("#phrase");
+const record = screen.querySelector("#record");
+const preview = screen.querySelector("#preview");
+const save = screen.querySelector("#save");
+const reset = screen.querySelector("#reset");
+const status = screen.querySelector("#status");
 const recordings = new Map();
 let database;
 let audio;
@@ -86,7 +90,7 @@ function foodArt(card) {
 
 for (const card of cards) {
   const tile = document.createElement("article");
-  tile.className = "card";
+  tile.className = "action-card";
   tile.innerHTML = `
     <div class="scene">
       <button class="object" type="button" aria-label="${card.alt ?? card.name}"><span aria-hidden="true">${card.food ? foodArt(card) : card.art}</span></button>
@@ -193,13 +197,13 @@ function showCurrentVoice() {
   if (!database) status.textContent += " 瀏覽器目前無法儲存錄音。";
 }
 
-document.querySelector("#settings").onclick = async () => {
+screen.querySelector("#settings").onclick = async () => {
   stopVoice();
   dialog.showModal();
   await ready;
   if (dialog.open && !busy && !recorder) showCurrentVoice();
 };
-document.querySelector("#close").onclick = () => dialog.close();
+screen.querySelector("#close").onclick = () => dialog.close();
 dialog.addEventListener("close", () => {
   if (recorder?.state === "recording") recorder.stop();
   draft = undefined;
@@ -291,3 +295,26 @@ const ready = loadRecordings();
 
 
 
+
+function openActions() {
+  home.classList.remove("active");
+  screen.classList.add("active");
+  screen.scrollTop = 0;
+  screen.querySelector("#actions-back").focus();
+}
+
+function closeActions() {
+  stopVoice();
+  screen.classList.remove("active");
+  home.classList.add("active");
+  if (location.hash === "#life-actions") history.replaceState(null, "", location.pathname + location.search);
+  entry.focus();
+}
+
+entry.addEventListener("click", openActions);
+screen.querySelector("#actions-back").addEventListener("click", closeActions);
+window.addEventListener("keydown", event => {
+  if (event.key === "Escape" && screen.classList.contains("active") && !dialog.open) closeActions();
+});
+if (location.hash === "#life-actions") openActions();
+})();
