@@ -10,6 +10,7 @@ const cards = [
     effect: '<span class="effect stream"></span>' },
   { name: "白飯", food: "rice", image: "01-白飯.png", alt: "一碗白飯", phrases: ["吃白飯"] },
   { name: "可樂", food: "cola", image: "21-可樂.png", alt: "一杯可樂", phrases: ["喝可樂"] },
+  { name: "牛奶", food: "milk", image: "18-牛奶.png", alt: "一杯牛奶", phrases: ["喝牛奶"] },
   { name: "珍珠", food: "pearls", image: "23-珍珠.png", alt: "一堆珍珠", phrases: ["吃珍珠"] },
 ];
 
@@ -74,6 +75,14 @@ function foodArt(card) {
       ${image("full-food")}
     </span>`;
   }
+  if (card.food === "milk") {
+    return `<span class="food milk">
+      <span class="glass"></span>
+      <span class="milk-interior"><span class="milk-fill"></span></span>
+      <span class="glass-rim"></span>
+      ${image("full-food")}
+    </span>`;
+  }
   if (card.food === "cola") {
     return `<span class="food cola">
       <span class="glass"></span>
@@ -121,7 +130,7 @@ for (const card of cards) {
         if (stage === stages) {
           clearInterval(timer);
           eating = false;
-          const result = { rice: "空碗", cola: "空杯", pearls: "珍珠吃完了" };
+          const result = { rice: "空碗", cola: "空杯", milk: "空杯", pearls: "珍珠吃完了" };
           target.setAttribute("aria-label", `${result[card.food]}，再點一次重來`);
         }
       }, 420);
@@ -299,7 +308,7 @@ const ready = loadRecordings();
 function openActions() {
   home.classList.remove("active");
   screen.classList.add("active");
-  screen.scrollTop = 0;
+  main.scrollLeft = 0;
   screen.querySelector("#actions-back").focus();
 }
 
@@ -315,6 +324,16 @@ entry.addEventListener("click", openActions);
 screen.querySelector("#actions-back").addEventListener("click", closeActions);
 window.addEventListener("keydown", event => {
   if (event.key === "Escape" && screen.classList.contains("active") && !dialog.open) closeActions();
+});
+main.addEventListener("keydown", event => {
+  const direction = { ArrowLeft: -1, ArrowRight: 1 }[event.key];
+  if (!direction) return;
+  event.preventDefault();
+  const pages = Array.from(main.children);
+  const step = pages[1].offsetLeft - pages[0].offsetLeft;
+  const current = Math.round(main.scrollLeft / step);
+  const next = Math.max(0, Math.min(pages.length - 1, current + direction));
+  main.scrollLeft = next * step;
 });
 if (location.hash === "#life-actions") openActions();
 })();

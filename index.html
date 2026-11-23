@@ -60,7 +60,7 @@ body{touch-action:manipulation;user-select:none}
 @media(max-height:520px) and (orientation:landscape){.hint{display:none}}
 </style>
 <style>
-#life-actions { flex-direction: column; padding: 0; overflow-y: auto; background: #f8f3e7; color: #293d34; }
+#life-actions { flex-direction: column; padding: 0 0 max(14px, env(safe-area-inset-bottom)); background: #f8f3e7; color: #293d34; }
 .cat.life-actions { background: #e6f2e7; }
 #life-actions header, #life-actions main { width: min(1060px, 100% - 32px); margin: 0 auto; }
 #life-actions header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: max(18px, env(safe-area-inset-top)) 0 20px; }
@@ -69,13 +69,14 @@ body{touch-action:manipulation;user-select:none}
 #life-actions button:focus-visible, #life-actions select:focus-visible { outline: 3px solid #25765c; outline-offset: 4px; }
 #life-actions .control { white-space: nowrap; border: 1px solid #b8c8b8; border-radius: 12px; background: #fffef9; padding: 9px 12px; }
 #life-actions .control:disabled { opacity: .55; cursor: default; }
-#life-actions main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px), 1fr)); gap: 14px; padding-bottom: 24px; }
-.action-card { display: grid; justify-items: center; align-content: center; min-height: 210px; padding: 12px; border-radius: 24px; background: #fffdf7; box-shadow: 0 2px 8px #3b4f3210; }
+#life-actions main { display: flex; flex: 1; min-height: 0; overflow-x: auto; overflow-y: hidden; gap: 12px; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+#life-actions main::-webkit-scrollbar { display: none; }
+.action-card { display: grid; grid-template-rows: minmax(0,1fr) auto; min-width: 0; flex: 0 0 100%; justify-items: center; padding: 12px; overflow: hidden; scroll-snap-align: start; scroll-snap-stop: always; border-radius: 24px; background: #fffdf7; box-shadow: 0 2px 8px #3b4f3210; }
 .action-card:nth-child(4n+2) { background: #edf6ed; }
 .action-card:nth-child(4n+3) { background: #edf5fb; }
 .action-card:nth-child(4n) { background: #fff1e7; }
-.action-card h2 { margin: 10px 0 0; font-size: 1.02rem; }
-.scene { position: relative; display: grid; place-items: center; width: 100%; height: 150px; isolation: isolate; }
+.action-card h2 { margin: 10px 0 0; font-size: clamp(1.5rem, 6vw, 3rem); }
+.scene { position: relative; display: grid; place-items: center; width: 100%; min-height: 0; container-type: size; isolation: isolate; }
 .object { border: 0; background: none; padding: 0; display: grid; place-items: center; z-index: 1; }
 .frame { position: relative; display: block; width: 102px; height: 135px; border: 7px solid #74492f; border-radius: 7px 7px 0 0; background: linear-gradient(#9cdbf2 56%, #8fbc73 57%, #759f5e 72%, #d4bd92 73%); }
 .frame::after { content: ""; position: absolute; inset: 0; background: #bd7f51; box-shadow: inset 0 0 0 5px #a46643; transform-origin: left; }
@@ -86,6 +87,12 @@ body{touch-action:manipulation;user-select:none}
 .window::after { background: linear-gradient(90deg, #a5ceda 47%, #596e74 48% 53%, #a5ceda 54%); box-shadow: inset 0 0 0 3px #728e97; }
 .window::before { display: none; }
 .open .window::after { transform: scaleX(.49); }
+@media (min-height: 400px) {
+  .action-card:not(:has(.food)) .scene { transform: scale(1.45); }
+}
+@media (min-height: 650px) {
+  .action-card:not(:has(.food)) .scene { transform: scale(2.2); }
+}
 .effect { position: absolute; pointer-events: none; opacity: 0; }
 .lamp { position: relative; display: block; width: 72px; height: 86px; margin-bottom: 22px; border: 5px solid #73654f; border-radius: 50% 50% 42% 42%; background: #e4dfd6; }
 .lamp::after { content: ""; position: absolute; top: 69px; left: 14px; width: 34px; height: 30px; border-radius: 4px 4px 12px 12px; background: repeating-linear-gradient(#6f7774 0 5px,#a3aaa6 5px 8px); }
@@ -99,7 +106,7 @@ body{touch-action:manipulation;user-select:none}
 .stream { top: 111px; left: calc(50% + 37px); width: 12px; height: 38px; border-radius: 10px; background: repeating-linear-gradient(#83d2f5 0 12px,#38a4d9 12px 20px);  }
 .flowing .stream { animation: water .4s linear infinite; }
 @keyframes water { to { background-position-y: 20px; } }
-.food { position: relative; display: block; width: min(153px, 39vw); aspect-ratio: 1; --remaining: 1; background: #fff; border-radius: 12px; overflow: hidden; }
+.food { position: relative; display: block; width: min(82cqw, 94cqh, 620px); aspect-ratio: 1; --remaining: 1; background: #fff; border-radius: 12px; overflow: hidden; }
 .food img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: fill; }
 .food .full-food { z-index: 2; }
 .food[data-stage]:not([data-stage="0"]) .full-food { visibility: hidden; }
@@ -115,6 +122,10 @@ body{touch-action:manipulation;user-select:none}
 .glass-rim { position: absolute; left: 15%; top: 3%; width: 70%; height: 26%; border: 3px solid #7e9b9f; border-radius: 50%; background: linear-gradient(#f8ffff90,#b5d3d633); }
 .cola-contents { clip-path: inset(calc(15% + (1 - var(--remaining)) * 73%) 0 11%); transition: clip-path .26s ease-out; }
 .cola[data-stage="6"] .cola-contents { clip-path: inset(89% 0 11%); }
+.milk .glass { background: linear-gradient(90deg, #379acb, #bceeff 21%, #7dceed 71%, #338cbf); }
+.milk .glass-rim { top: 5%; height: 22%; border-color: #652715; background: #8bd8f6aa; }
+.milk-interior { position: absolute; inset: 23% 19% 14%; display: flex; align-items: end; clip-path: polygon(0 0,100% 0,87% 86%,82% 96%,72% 100%,28% 100%,18% 96%,13% 86%); }
+.milk-fill { width: 100%; height: calc(var(--remaining) * 100%); border-radius: 50% 50% 0 0 / 10px 10px 0 0; background: linear-gradient(90deg,#f2e4bd,#fffaf0 23%,#fff7e7 63%,#e5d5ad); transition: height .26s ease-out; }
 .pearl { position: absolute; width: 27%; height: 27%; border-radius: 50%; background-image: var(--pearls); background-size: 361% 361%; background-position: 49.5% 19%; }
 .pearl:nth-child(1) { left: 36%; top: 16%; }
 .pearl:nth-child(2) { left: 20%; top: 30%; }
@@ -133,14 +144,9 @@ body{touch-action:manipulation;user-select:none}
 #life-actions dialog select { width: 100%; margin: 6px 0 12px; padding: 8px; }
 .controls { display: flex; flex-wrap: wrap; gap: 7px; }
 #status { min-height: 1.5em; }
-@media (max-width: 530px) {
-  #life-actions main { grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
-  .action-card { min-height: 175px; padding: 4px; }
-  .scene { height: 140px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .flowing .stream { animation: none; }
-  .rice-contents, .cola-contents { transition: none; }
+  .rice-contents, .cola-contents, .milk-fill { transition: none; }
 }
 </style>
 </head>
@@ -176,7 +182,7 @@ body{touch-action:manipulation;user-select:none}
   </div>
   <button class="control" id="settings">家長錄音</button>
 </header>
-<main aria-label="生活動作卡片"></main>
+<main aria-label="生活動作卡片，左右滑動換頁" tabindex="0"></main>
 <dialog aria-labelledby="settings-title">
   <h2 id="settings-title">家長錄音</h2>
   <label for="phrase">選擇動作詞</label>
@@ -406,6 +412,6 @@ window.addEventListener("keydown",e=>{
   if(e.key==="Escape") goHome();
 });
 </script>
-<script src="life-actions.js"></script>
+<script src="life-actions.js?v=2"></script>
 </body>
 </html>
