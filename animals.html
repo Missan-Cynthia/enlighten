@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#fff5df">
-  <title>餵動物｜啟蒙點擊</title>
+  <title>認識動物｜啟蒙點擊</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #fff5df; color: #493322; font: 1rem/1.5 system-ui, sans-serif; }
@@ -29,24 +29,15 @@
     .animal img { display: block; width: 100%; height: clamp(112px, calc(100dvh - 250px), 520px); object-fit: contain; user-select: none; }
     .name { padding: 2px 16px; border-radius: 100px; background: #ffebaf; font-size: clamp(1.5rem, 5vw, 2rem); }
     .animal[data-kind="鳥類朋友"] .name { background: #d9edfc; }
-    .meal {
-      position: absolute; inset: auto 4px 66px; justify-self: center; max-width: calc(100% - 8px);
-      padding: 4px 9px; border-radius: 12px; background: #edf6d1; box-shadow: 0 3px 10px #48332035;
-    }
-    .meal:not([hidden]) { animation: arrive .25s ease-out; }
-    .eating img { animation: nibble .45s ease-in-out 2; }
-    @keyframes arrive { from { opacity: 0; transform: translateY(10px) scale(.8); } }
-    @keyframes nibble { 45% { transform: translateY(4px) rotate(-4deg); } }
-    @media (prefers-reduced-motion: reduce) { .animal img, .meal:not([hidden]) { animation: none; } }
     .announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   </style>
-  <script src="animals.js?v=2" defer></script>
+  <script src="animals.js?v=3" defer></script>
 </head>
 <body>
   <header>
     <a href="./">← 回首頁</a>
-    <h1>餵動物</h1>
-    <p>點一點，看看動物吃什麼。</p>
+    <h1>認識動物</h1>
+    <p>點一下圖卡，聽動物的名字。</p>
   </header>
   <main>
     <div class="navigation" aria-label="動物卡片導覽" role="group">

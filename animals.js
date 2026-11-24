@@ -1,38 +1,39 @@
 (() => {
   const groups = [
     ["農場動物", [
-      ["horse", "馬", "乾草", "🌾"],
-      ["cow", "牛", "青草", "🌿"],
-      ["sheep", "綿羊", "青草", "🌿"],
-      ["pig", "豬", "豬飼料", "🥣"],
-      ["rabbit", "兔子", "乾草", "🌾"],
-      ["hen", "雞", "穀粒", "🌾"],
-      ["farm-duck", "鴨子", "鴨飼料", "🥣"],
-      ["farm-pigeon", "鴿子", "穀粒", "🌾"],
+      ["horse", "馬"],
+      ["cow", "牛"],
+      ["sheep", "綿羊"],
+      ["pig", "豬"],
+      ["rabbit", "兔子"],
+      ["hen", "雞"],
+      ["farm-duck", "鴨子"],
+      ["farm-pigeon", "鴿子"],
     ]],
     ["鳥類朋友", [
-      ["chick", "小雞", "小雞飼料", "🥣"],
-      ["bluebird", "小鳥", "種子", "🌾", "我餵鳥吃飯。"],
-      ["garden-duck", "鴨子", "鴨飼料", "🥣"],
-      ["garden-pigeon", "鴿子", "穀粒", "🌾"],
-      ["owl", "貓頭鷹", "小老鼠", "🐭", "貓頭鷹發現小老鼠了。"],
-      ["sparrow", "麻雀", "種子", "🌾"],
-      ["peacock", "孔雀", "穀粒", "🌾"],
-      ["woodpecker", "啄木鳥", "小蟲", "🐛", "啄木鳥找到小蟲了。"],
+      ["chick", "小雞"],
+      ["bluebird", "小鳥"],
+      ["garden-duck", "鴨子"],
+      ["garden-pigeon", "鴿子"],
+      ["owl", "貓頭鷹"],
+      ["sparrow", "麻雀"],
+      ["peacock", "孔雀"],
+      ["woodpecker", "啄木鳥"],
     ]],
   ];
   const main = document.querySelector("#animals");
   const announcement = document.querySelector("#announcement");
   const progress = document.querySelector("#progress");
   const speech = window.speechSynthesis;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const cards = [];
   let current = 0;
-  let finishFeeding;
+  let wiggle;
 
-  function speak(phrase) {
+  function speak(name) {
     if (!speech || !window.SpeechSynthesisUtterance) return;
     speech.cancel();
-    const utterance = new SpeechSynthesisUtterance(phrase);
+    const utterance = new SpeechSynthesisUtterance(name);
     utterance.lang = "zh-TW";
     const voice = speech.getVoices().find(({ lang }) => lang.toLowerCase() === "zh-tw");
     if (voice) utterance.voice = voice;
@@ -40,7 +41,7 @@
   }
 
   for (const [title, animals] of groups) {
-    for (const [id, name, food, icon, phrase = `我餵${name}吃飯。`] of animals) {
+    for (const [id, name] of animals) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "animal";
@@ -53,28 +54,19 @@
       const label = document.createElement("span");
       label.className = "name";
       label.textContent = name;
-      const meal = document.createElement("span");
-      meal.className = "meal";
-      meal.hidden = true;
-      meal.setAttribute("aria-hidden", "true");
-      meal.textContent = `${icon} ${food}`;
-      button.append(picture, label, meal);
+      button.append(picture, label);
       button.addEventListener("click", (event) => {
         if (event.detail && performance.now() < suppressClickUntil) return;
-        finishFeeding?.();
-        meal.hidden = false;
-        button.classList.add("eating");
-        announcement.textContent = `${phrase}${food}`;
-        speak(phrase);
-        const reset = () => {
-          meal.hidden = true;
-          button.classList.remove("eating");
-        };
-        const timer = setTimeout(reset, 2400);
-        finishFeeding = () => {
-          clearTimeout(timer);
-          reset();
-        };
+        speak(name);
+        if (reducedMotion.matches) return;
+        wiggle?.cancel();
+        wiggle = picture.animate([
+          { transform: "translateX(0) rotate(0)" },
+          { transform: "translateX(-8px) rotate(-4deg)" },
+          { transform: "translateX(8px) rotate(4deg)" },
+          { transform: "translateX(-4px) rotate(-2deg)" },
+          { transform: "translateX(0) rotate(0)" },
+        ], { duration: 800, easing: "ease-in-out" });
       });
       cards.push(button);
       main.append(button);
@@ -82,7 +74,7 @@
   }
 
   function showCard(offset) {
-    finishFeeding?.();
+    wiggle?.cancel();
     speech?.cancel();
     const wasFocused = document.activeElement === cards[current];
     cards[current].hidden = true;
