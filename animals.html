@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff5df">
+  <title>餵動物｜啟蒙點擊</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #fff5df; color: #493322; font: 1rem/1.5 system-ui, sans-serif; }
+    header, main { width: min(960px, 100% - 28px); margin: auto; }
+    header { padding-top: 18px; }
+    h1 { margin: 12px 0 0; font-size: clamp(1.8rem, 6vw, 3rem); }
+    p { margin: 0 0 12px; }
+    a { color: #493322; font-weight: 700; }
+    :focus-visible { outline: 3px solid #286148; outline-offset: 3px; }
+    section { padding: 8px 0 24px; }
+    h2 { margin: 0 0 10px; font-size: 1.25rem; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(136px, 44%), 1fr)); gap: 12px; }
+    .animal {
+      position: relative; display: grid; justify-items: center; align-content: end; gap: 5px;
+      min-width: 0; padding: 8px 8px 10px; overflow: hidden; cursor: pointer;
+      border: 1px solid #e8d6ae; border-radius: 20px; background: #fff;
+      color: inherit; font: inherit; font-weight: 800;
+    }
+    .animal img { display: block; width: 100%; height: clamp(110px, 26vw, 170px); object-fit: contain; }
+    .name { padding: 2px 13px; border-radius: 100px; background: #ffebaf; font-size: 1.2rem; }
+    section:nth-child(2) .name { background: #d9edfc; }
+    .meal {
+      position: absolute; inset: auto 4px 43px; justify-self: center; max-width: calc(100% - 8px);
+      padding: 4px 9px; border-radius: 12px; background: #edf6d1; box-shadow: 0 3px 10px #48332035;
+    }
+    .meal:not([hidden]) { animation: arrive .25s ease-out; }
+    .eating img { animation: nibble .45s ease-in-out 2; }
+    @keyframes arrive { from { opacity: 0; transform: translateY(10px) scale(.8); } }
+    @keyframes nibble { 45% { transform: translateY(4px) rotate(-4deg); } }
+    @media (prefers-reduced-motion: reduce) { .animal img, .meal:not([hidden]) { animation: none; } }
+    .announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  </style>
+  <script src="animals.js" defer></script>
+</head>
+<body>
+  <header>
+    <a href="./">← 回首頁</a>
+    <h1>餵動物</h1>
+    <p>點一點，看看動物吃什麼。</p>
+  </header>
+  <main id="animals"></main>
+  <div id="announcement" class="announcement" role="status"></div>
+</body>
+</html>
