@@ -23,7 +23,10 @@
   ];
   const main = document.querySelector("#animals");
   const announcement = document.querySelector("#announcement");
+  const progress = document.querySelector("#progress");
   const speech = window.speechSynthesis;
+  const cards = [];
+  let current = 0;
   let finishFeeding;
 
   function speak(phrase) {
@@ -37,19 +40,16 @@
   }
 
   for (const [title, animals] of groups) {
-    const section = document.createElement("section");
-    const heading = document.createElement("h2");
-    heading.textContent = title;
-    const cards = document.createElement("div");
-    cards.className = "cards";
-
     for (const [id, name, food, icon, phrase = `我餵${name}吃飯。`] of animals) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "animal";
+      button.dataset.kind = title;
+      button.hidden = true;
       const picture = document.createElement("img");
       picture.src = `output/animals/${id}.png`;
       picture.alt = "";
+      picture.draggable = false;
       const label = document.createElement("span");
       label.className = "name";
       label.textContent = name;
@@ -59,7 +59,8 @@
       meal.setAttribute("aria-hidden", "true");
       meal.textContent = `${icon} ${food}`;
       button.append(picture, label, meal);
-      button.addEventListener("click", () => {
+      button.addEventListener("click", (event) => {
+        if (event.detail && performance.now() < suppressClickUntil) return;
         finishFeeding?.();
         meal.hidden = false;
         button.classList.add("eating");
@@ -75,12 +76,47 @@
           reset();
         };
       });
-      cards.append(button);
+      cards.push(button);
+      main.append(button);
     }
-
-    section.append(heading, cards);
-    main.append(section);
   }
 
+  function showCard(offset) {
+    finishFeeding?.();
+    speech?.cancel();
+    const wasFocused = document.activeElement === cards[current];
+    cards[current].hidden = true;
+    current = (current + offset + cards.length) % cards.length;
+    const card = cards[current];
+    card.hidden = false;
+    progress.textContent = `${current + 1} / ${cards.length}`;
+    announcement.textContent = `${card.querySelector(".name").textContent}，第 ${current + 1} 張，共 ${cards.length} 張。`;
+    if (wasFocused) card.focus();
+  }
+
+  let touchStart;
+  let suppressClickUntil = 0;
+  main.addEventListener("touchstart", (event) => {
+    touchStart = event.touches.length === 1 ? event.touches[0] : undefined;
+  }, { passive: true });
+  main.addEventListener("touchend", (event) => {
+    if (!touchStart || event.touches.length) return;
+    const end = event.changedTouches[0];
+    const dx = end.clientX - touchStart.clientX;
+    const dy = end.clientY - touchStart.clientY;
+    touchStart = undefined;
+    if (Math.abs(dx) < 45 || Math.abs(dx) <= Math.abs(dy)) return;
+    suppressClickUntil = performance.now() + 300;
+    showCard(dx < 0 ? 1 : -1);
+  }, { passive: true });
+  main.addEventListener("touchcancel", () => { touchStart = undefined; });
+  document.querySelector("#previous").addEventListener("click", () => showCard(-1));
+  document.querySelector("#next").addEventListener("click", () => showCard(1));
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    showCard(event.key === "ArrowLeft" ? -1 : 1);
+  });
+  showCard(0);
   window.addEventListener("pagehide", () => speech?.cancel());
 })();

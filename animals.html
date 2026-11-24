@@ -14,20 +14,23 @@
     p { margin: 0 0 12px; }
     a { color: #493322; font-weight: 700; }
     :focus-visible { outline: 3px solid #286148; outline-offset: 3px; }
-    section { padding: 8px 0 24px; }
-    h2 { margin: 0 0 10px; font-size: 1.25rem; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(136px, 44%), 1fr)); gap: 12px; }
+    main { max-width: 620px; padding: 8px 0 24px; }
+    .navigation { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 0 10px; }
+    .navigation button { padding: 8px 13px; border: 1px solid #e8d6ae; border-radius: 12px; background: #fff; color: inherit; font: inherit; cursor: pointer; }
+    .progress { font-weight: 700; text-align: center; }
+    #animals { touch-action: pan-y; }
     .animal {
       position: relative; display: grid; justify-items: center; align-content: end; gap: 5px;
-      min-width: 0; padding: 8px 8px 10px; overflow: hidden; cursor: pointer;
+      width: 100%; min-width: 0; padding: 12px 12px 14px; overflow: hidden; cursor: pointer;
       border: 1px solid #e8d6ae; border-radius: 20px; background: #fff;
       color: inherit; font: inherit; font-weight: 800;
     }
-    .animal img { display: block; width: 100%; height: clamp(110px, 26vw, 170px); object-fit: contain; }
-    .name { padding: 2px 13px; border-radius: 100px; background: #ffebaf; font-size: 1.2rem; }
-    section:nth-child(2) .name { background: #d9edfc; }
+    .animal[hidden] { display: none; }
+    .animal img { display: block; width: 100%; height: clamp(112px, calc(100dvh - 250px), 520px); object-fit: contain; user-select: none; }
+    .name { padding: 2px 16px; border-radius: 100px; background: #ffebaf; font-size: clamp(1.5rem, 5vw, 2rem); }
+    .animal[data-kind="鳥類朋友"] .name { background: #d9edfc; }
     .meal {
-      position: absolute; inset: auto 4px 43px; justify-self: center; max-width: calc(100% - 8px);
+      position: absolute; inset: auto 4px 66px; justify-self: center; max-width: calc(100% - 8px);
       padding: 4px 9px; border-radius: 12px; background: #edf6d1; box-shadow: 0 3px 10px #48332035;
     }
     .meal:not([hidden]) { animation: arrive .25s ease-out; }
@@ -37,7 +40,7 @@
     @media (prefers-reduced-motion: reduce) { .animal img, .meal:not([hidden]) { animation: none; } }
     .announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   </style>
-  <script src="animals.js" defer></script>
+  <script src="animals.js?v=2" defer></script>
 </head>
 <body>
   <header>
@@ -45,7 +48,14 @@
     <h1>餵動物</h1>
     <p>點一點，看看動物吃什麼。</p>
   </header>
-  <main id="animals"></main>
+  <main>
+    <div class="navigation" aria-label="動物卡片導覽" role="group">
+      <button id="previous" type="button">← 上一張</button>
+      <span id="progress" class="progress"></span>
+      <button id="next" type="button">下一張 →</button>
+    </div>
+    <div id="animals"></div>
+  </main>
   <div id="announcement" class="announcement" role="status"></div>
 </body>
 </html>
