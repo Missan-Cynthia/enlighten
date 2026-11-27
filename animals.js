@@ -25,10 +25,27 @@
   const announcement = document.querySelector("#announcement");
   const progress = document.querySelector("#progress");
   const speech = window.speechSynthesis;
+  const audio = new Audio();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const cards = [];
   let current = 0;
   let wiggle;
+  let playbackRequest = 0;
+
+  function stopPronunciation() {
+    playbackRequest++;
+    audio.pause();
+    speech?.cancel();
+  }
+
+  function pronounce(id, name) {
+    stopPronunciation();
+    const request = playbackRequest;
+    audio.src = `audio/animals/${id}.wav`;
+    audio.play().catch(() => {
+      if (request === playbackRequest) speak(name);
+    });
+  }
 
   function speak(name) {
     if (!speech || !window.SpeechSynthesisUtterance) return;
@@ -57,7 +74,7 @@
       button.append(picture, label);
       button.addEventListener("click", (event) => {
         if (event.detail && performance.now() < suppressClickUntil) return;
-        speak(name);
+        pronounce(id, name);
         if (reducedMotion.matches) return;
         wiggle?.cancel();
         wiggle = picture.animate([
@@ -75,7 +92,7 @@
 
   function showCard(offset) {
     wiggle?.cancel();
-    speech?.cancel();
+    stopPronunciation();
     const wasFocused = document.activeElement === cards[current];
     cards[current].hidden = true;
     current = (current + offset + cards.length) % cards.length;
@@ -110,5 +127,5 @@
     showCard(event.key === "ArrowLeft" ? -1 : 1);
   });
   showCard(0);
-  window.addEventListener("pagehide", () => speech?.cancel());
+  window.addEventListener("pagehide", stopPronunciation);
 })();
