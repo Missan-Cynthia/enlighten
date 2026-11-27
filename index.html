@@ -63,6 +63,7 @@ body{touch-action:manipulation;user-select:none}
 #life-actions { flex-direction: column; padding: 0 0 max(14px, env(safe-area-inset-bottom)); background: #f8f3e7; color: #293d34; }
 .grid:has(.animals-entry) { grid-template-rows: repeat(3, minmax(0, 1fr)); width: min(92vw, 115dvh, 760px); aspect-ratio: 5 / 4; }
 .cat.animals-entry { background: #ffedc9; color: inherit; text-decoration: none; }
+.cat.body-entry { background: #d9f1f0; color: inherit; text-decoration: none; }
 .cat.life-actions { background: #e6f2e7; }
 #life-actions header, #life-actions main { width: min(1060px, 100% - 32px); margin: 0 auto; }
 #life-actions header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: max(18px, env(safe-area-inset-top)) 0 20px; }
@@ -163,6 +164,7 @@ body{touch-action:manipulation;user-select:none}
     <button class="cat pokemon" data-cat="pokemon"><div class="cat-icon"><img class="cat-icon-img" src="精靈球.png" alt="精靈球"></div><div class="cat-name">寶可夢</div></button>
     <button class="cat life-actions" id="actions-entry"><div class="cat-icon" aria-hidden="true">🚪</div><div class="cat-name">生活動作</div></button>
     <a class="cat animals-entry" href="animals.html"><div class="cat-icon" aria-hidden="true">🐼</div><div class="cat-name">認識動物</div></a>
+    <a class="cat body-entry" href="body.html"><div class="cat-icon" aria-hidden="true">🧍</div><div class="cat-name">認識身體</div></a>
   </div>
 </section>
 

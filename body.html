@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>認識身體｜啟蒙點擊</title>
+  <script src="body.js" defer></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #ecf7f5; color: #233c37; font: 1rem/1.5 system-ui, sans-serif; }
+    main { width: min(680px, 100% - 24px); margin: auto; padding: 12px 0 max(16px, env(safe-area-inset-bottom)); }
+    a { color: #1b5644; font-weight: 700; }
+    h1 { margin: 4px 0 0; font-size: clamp(1.55rem, 5vw, 2.25rem); }
+    p { margin: 0; }
+    nav { display: flex; gap: 6px; margin: 10px 0; }
+    button { font: inherit; cursor: pointer; }
+    nav button { flex: 1; min-height: 40px; border: 1px solid #98bdb4; border-radius: 12px; background: white; color: inherit; font-weight: 700; }
+    nav button[aria-pressed="true"] { background: #226350; color: white; }
+    .card { margin: 0; padding: 5px 0; border: 1px solid #badbd2; border-radius: 22px; background: white; }
+    #diagram { position: relative; width: min(100%, clamp(290px, calc(100dvh - 190px), 540px)); margin: auto; }
+    #picture { display: block; width: 100%; height: auto; }
+    .point { position: absolute; display: grid; place-items: center; width: clamp(26px, 7.5vw, 44px); aspect-ratio: 1; transform: translate(-50%, -50%); border: 0; border-radius: 50%; background: transparent; padding: 0; }
+    .point::after { content: ""; width: 11px; height: 11px; border: 2px solid white; border-radius: 50%; background: #12745d; box-shadow: 0 0 0 2px #23594b; }
+    .point[aria-pressed="true"]::after { width: 22px; height: 22px; background: #ffdc65; }
+    :focus-visible { outline: 3px solid #155eaa; outline-offset: 2px; }
+    #part-name { min-height: 1.55em; text-align: center; font-size: clamp(1.35rem, 5vw, 2rem); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <main>
+    <a href="./">← 回首頁</a>
+    <h1>認識身體</h1>
+    <p>點圖上的圓點，聽身體部位的名字。</p>
+    <nav id="views" aria-label="選擇身體圖"></nav>
+    <figure class="card">
+      <div id="diagram"><img id="picture" width="1254" height="1254" alt=""></div>
+      <figcaption id="part-name" role="status"></figcaption>
+    </figure>
+  </main>
+</body>
+</html>
