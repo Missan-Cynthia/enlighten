@@ -1,29 +1,9 @@
 (() => {
-  const groups = [
-    ["農場動物", [
-      ["horse", "馬"],
-      ["cow", "牛"],
-      ["sheep", "綿羊"],
-      ["pig", "豬"],
-      ["rabbit", "兔子"],
-      ["hen", "雞"],
-      ["farm-duck", "鴨子"],
-      ["farm-pigeon", "鴿子"],
-    ]],
-    ["鳥類朋友", [
-      ["chick", "小雞"],
-      ["bluebird", "小鳥"],
-      ["garden-duck", "鴨子"],
-      ["garden-pigeon", "鴿子"],
-      ["owl", "貓頭鷹"],
-      ["sparrow", "麻雀"],
-      ["peacock", "孔雀"],
-      ["woodpecker", "啄木鳥"],
-    ]],
-  ];
+  const animals = window.zooAnimals;
   const main = document.querySelector("#animals");
   const announcement = document.querySelector("#announcement");
   const progress = document.querySelector("#progress");
+  const credit = document.querySelector("#photo-credit");
   const speech = window.speechSynthesis;
   const audio = new Audio();
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -41,7 +21,7 @@
   function pronounce(id, name) {
     stopPronunciation();
     const request = playbackRequest;
-    audio.src = `audio/animals/${id}.wav`;
+    audio.src = `audio/zoo/${id}.wav`;
     audio.play().catch(() => {
       if (request === playbackRequest) speak(name);
     });
@@ -57,37 +37,34 @@
     speech.speak(utterance);
   }
 
-  for (const [title, animals] of groups) {
-    for (const [id, name] of animals) {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "animal";
-      button.dataset.kind = title;
-      button.hidden = true;
-      const picture = document.createElement("img");
-      picture.src = `output/animals/${id}.png`;
-      picture.alt = "";
-      picture.draggable = false;
-      const label = document.createElement("span");
-      label.className = "name";
-      label.textContent = name;
-      button.append(picture, label);
-      button.addEventListener("click", (event) => {
-        if (event.detail && performance.now() < suppressClickUntil) return;
-        pronounce(id, name);
-        if (reducedMotion.matches) return;
-        wiggle?.cancel();
-        wiggle = picture.animate([
-          { transform: "translateX(0) rotate(0)" },
-          { transform: "translateX(-8px) rotate(-4deg)" },
-          { transform: "translateX(8px) rotate(4deg)" },
-          { transform: "translateX(-4px) rotate(-2deg)" },
-          { transform: "translateX(0) rotate(0)" },
-        ], { duration: 800, easing: "ease-in-out" });
-      });
-      cards.push(button);
-      main.append(button);
-    }
+  for (const { id, name, file } of animals) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "animal";
+    button.hidden = true;
+    const picture = document.createElement("img");
+    picture.src = `output/zoo/${file}`;
+    picture.alt = "";
+    picture.draggable = false;
+    const label = document.createElement("span");
+    label.className = "name";
+    label.textContent = name;
+    button.append(picture, label);
+    button.addEventListener("click", (event) => {
+      if (event.detail && performance.now() < suppressClickUntil) return;
+      pronounce(id, name);
+      if (reducedMotion.matches) return;
+      wiggle?.cancel();
+      wiggle = picture.animate([
+        { transform: "translateX(0) rotate(0)" },
+        { transform: "translateX(-8px) rotate(-4deg)" },
+        { transform: "translateX(8px) rotate(4deg)" },
+        { transform: "translateX(-4px) rotate(-2deg)" },
+        { transform: "translateX(0) rotate(0)" },
+      ], { duration: 800, easing: "ease-in-out" });
+    });
+    cards.push(button);
+    main.append(button);
   }
 
   function showCard(offset) {
@@ -98,6 +75,14 @@
     current = (current + offset + cards.length) % cards.length;
     const card = cards[current];
     card.hidden = false;
+    const { author, license, licenseUrl, source } = animals[current];
+    const photoSource = document.createElement("a");
+    photoSource.href = source;
+    photoSource.textContent = author || "Wikimedia Commons";
+    const photoLicense = document.createElement(licenseUrl ? "a" : "span");
+    if (licenseUrl) photoLicense.href = licenseUrl;
+    photoLicense.textContent = license;
+    credit.replaceChildren("照片：", photoSource, " · ", photoLicense, " · 縮圖");
     progress.textContent = `${current + 1} / ${cards.length}`;
     announcement.textContent = `${card.querySelector(".name").textContent}，第 ${current + 1} 張，共 ${cards.length} 張。`;
     if (wasFocused) card.focus();

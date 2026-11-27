@@ -28,10 +28,11 @@
     .animal[hidden] { display: none; }
     .animal img { display: block; width: 100%; height: clamp(112px, calc(100dvh - 250px), 520px); object-fit: contain; user-select: none; }
     .name { padding: 2px 16px; border-radius: 100px; background: #ffebaf; font-size: clamp(1.5rem, 5vw, 2rem); }
-    .animal[data-kind="鳥類朋友"] .name { background: #d9edfc; }
+    #photo-credit { margin: 8px 0 0; text-align: center; font-size: .75rem; }
     .announcement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   </style>
-  <script src="animals.js?v=4" defer></script>
+  <script src="zoo-animals.js?v=1" defer></script>
+  <script src="animals.js?v=5" defer></script>
 </head>
 <body>
   <header>
@@ -46,6 +47,7 @@
       <button id="next" type="button">下一張 →</button>
     </div>
     <div id="animals"></div>
+    <p id="photo-credit"></p>
   </main>
   <div id="announcement" class="announcement" role="status"></div>
 </body>
